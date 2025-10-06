@@ -27,58 +27,58 @@ ChatGPT 스타일로 “왜 이렇게 예측됐는지”를 자연어로 설명�
 
 ## 📁 프로젝트 구조
 
-WhyAgent/
-├── app/
-│   └── Services/
-│       ├── main.py              # FastAPI 엔트리포인트 (라우트)
-│       ├── chat.py              # /api/chat 핸들러
-│       ├── explain.py           # 뉴스 수집 + LLM 프롬프트/호출
-│       └── mlflow_loader.py     # 모델 로딩/예측 헬퍼
-│
-├── web/
-│   └── index.html               # 간단한 채팅 UI (/web/)
-│
-├── ml/
-│   ├── fetch_prices.py          # yfinance(+Stooq) 수집
-│   ├── features.py              # 피처 생성/표준화
-│   └── train.py                 # XGBoost 학습 + MLflow 로깅
-│
-├── utils/
-│   └── io_utils.py              # data 경로 등 I/O 유틸
-│
-├── configs/
-│   └── tickers.yml              # 티커/주기 설정
-│
-├── data/
-│   └── prices/                  # 저장된 Parquet 파일
-│
-├── .env                         # 환경 변수
-├── requirements.txt
-└── README.md
+WhyAgent/  
+├── app/  
+│   └── Services/  
+│       ├── main.py              # FastAPI 엔트리포인트 (라우트)  
+│       ├── chat.py              # /api/chat 핸들러  
+│       ├── explain.py           # 뉴스 수집 + LLM 프롬프트/호출  
+│       └── mlflow_loader.py     # 모델 로딩/예측 헬퍼  
+│  
+├── web/  
+│   └── index.html               # 간단한 채팅 UI (/web/)  
+│  
+├── ml/  
+│   ├── fetch_prices.py          # yfinance(+Stooq) 수집  
+│   ├── features.py              # 피처 생성/표준화  
+│   └── train.py                 # XGBoost 학습 + MLflow 로깅  
+│  
+├── utils/  
+│   └── io_utils.py              # data 경로 등 I/O 유틸  
+│  
+├── configs/  
+│   └── tickers.yml              # 티커/주기 설정  
+│  
+├── data/  
+│   └── prices/                  # 저장된 Parquet 파일  
+│  
+├── .env                         # 환경 변수  
+├── requirements.txt  
+└── README.md  
+  
 
 
-
-## 🚧 아키텍쳐
-
-              ▼
-          fetch_prices.py
-              │
-    ┌─────────┴──────────┐
-    ▼                    ▼
-Yahoo (yfinance)       Stooq
-    ▼                    ▼
-  [수집 실패 시 fallback]
-    ▼
-.parquet 저장 (data/prices/*.parquet)
-    ▼
-make_features.py → features 생성
-    ▼
-train.py → XGBoost 모델 학습 + MLflow 로깅
-    ▼
-MLflow에서 모델 로딩
-    ▼
-FastAPI 서버 (main.py)
-    ├── /predict   ← API 호출 (JSON)
-    ├── /api/chat  ← 자연어 입력 (LLM explain)
-    └── /web/      ← UI 인터페이스
-
+## 🚧 아키텍쳐  
+  
+              ▼  
+          fetch_prices.py  
+              │  
+    ┌─────────┴──────────┐  
+    ▼                    ▼  
+Yahoo (yfinance)       Stooq  
+    ▼                    ▼  
+  [수집 실패 시 fallback]  
+    ▼  
+.parquet 저장 (data/prices/*.parquet)  
+    ▼  
+make_features.py → features 생성  
+    ▼  
+train.py → XGBoost 모델 학습 + MLflow 로깅  
+    ▼  
+MLflow에서 모델 로딩  
+    ▼  
+FastAPI 서버 (main.py)  
+    ├── /predict   ← API 호출 (JSON)  
+    ├── /api/chat  ← 자연어 입력 (LLM explain)  
+    └── /web/      ← UI 인터페이스  
+  
