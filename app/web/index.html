@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WhyAgent Chat</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#0b1220;color:#e6e8ee}
+    .wrap{max-width:760px;margin:40px auto;padding:20px}
+    h1{font-weight:700;margin-bottom:10px}
+    .card{background:#111a2c;border:1px solid #1f2a44;border-radius:16px;padding:16px;margin-top:12px}
+    .row{display:flex;gap:8px}
+    input,button{font-size:16px;border-radius:12px;padding:12px;border:1px solid #2a3b61;background:#0f1a30;color:#e6e8ee}
+    input{flex:1}
+    button{cursor:pointer}
+    pre{white-space:pre-wrap;word-wrap:break-word}
+    .mono{font-family:ui-monospace,SFMono-Regular,Consolas,Monaco,monospace}
+    .pill{display:inline-block;background:#1f2a44;padding:4px 8px;border-radius:999px;margin-right:6px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>WhyAgent Chat</h1>
+    <div class="card">
+      <div class="row">
+        <input id="q" placeholder="예: AAPL이 왜 이렇게 주가 예측이 돼?" />
+        <button id="send">질문</button>
+      </div>
+      <small>팁: 티커를 포함해 물어보면 자동으로 인식합니다. (예: AAPL, MSFT)</small>
+    </div>
+
+    <div id="out" class="card" style="display:none"></div>
+  </div>
+
+  <script>
+    const q = document.getElementById('q');
+    const send = document.getElementById('send');
+    const out = document.getElementById('out');
+
+    async function ask() {
+      const message = q.value.trim();
+      if(!message) return;
+      out.style.display = 'block';
+      out.innerHTML = '질문 처리 중...';
+
+      try{
+        const res = await fetch('/api/chat', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ message })
+        });
+        const data = await res.json();
+
+        if(!data.ok){
+          out.innerHTML = `<b>오류/안내</b><br>${data.answer}`;
+          return;
+        }
+
+        out.innerHTML = `
+          <div><span class="pill">Ticker</span> <b>${data.ticker}</b></div>
+          <div><span class="pill">Pred</span> ${data.pred_pct_percent}%</div>
+          <hr>
+          <b>설명</b>
+          <pre>${data.explanation}</pre>
+          <hr>
+          <b>Top Features</b>
+          <pre class="mono">${JSON.stringify(data.top_features, null, 2)}</pre>
+          <div>뉴스 개수: ${data.news_count}</div>
+        `;
+      } catch(e){
+        out.innerHTML = '에러: ' + (e?.message || e);
+      }
+    }
+
+    send.onclick = ask;
+    q.onkeydown = (e)=>{ if(e.key==='Enter') ask(); };
+  </script>
+</body>
+</html>

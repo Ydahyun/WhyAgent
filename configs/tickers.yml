@@ -1,0 +1,7 @@
+tickers:
+  - AAPL
+  - MSFT
+  - META
+price_interval: "1d"
+price_period: "3mo"
+predict_horizon: 1
