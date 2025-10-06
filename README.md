@@ -60,27 +60,4 @@ WhyAgent/
 
 ## 🚧 아키텍쳐  
   
-                   ▼
-           fetch_prices.py
-                   │
-       ┌───────────┴───────────┐
-       ▼                       ▼
-  Yahoo (yfinance)         Stooq
-       ▼                       ▼
-        [수집 실패 시 fallback]
-                   ▼
-    .parquet 저장 (data/prices/*.parquet)
-                   ▼
-        make_features.py → features 생성
-                   ▼
-   train.py → XGBoost 모델 학습 + MLflow 로깅
-                   ▼
-           MLflow에서 모델 로딩
-                   ▼
-           FastAPI 서버 (main.py)
-                   │
-       ┌───────────┼────────────┐
-       ▼           ▼            ▼
-   /predict     /api/chat      /web/
- ← API 호출    ← 자연어 입력   ← UI 인터페이스
- (JSON)         (LLM explain)
+
